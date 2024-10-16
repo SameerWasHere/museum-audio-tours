@@ -10,28 +10,35 @@ type Artwork = {
   long_description: string;
 };
 
+async function fetchArtworksData(): Promise<Artwork[]> {
+  try {
+    const res = await fetch('/api/artworks');
+    if (!res.ok) {
+      throw new Error('Failed to fetch artworks');
+    }
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching artworks:', error);
+    return [];
+  }
+}
+
 export default function SFMOMA() {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Artwork[]>([]);
   const [artworks, setArtworks] = useState<Artwork[]>([]);
 
   useEffect(() => {
-    async function fetchArtworks() {
-      try {
-        const res = await fetch('/api/artworks');
-        const data = await res.json();
-        setArtworks(data);
-        setResults(data); // Display all artworks initially
-      } catch (error) {
-        console.error('Error fetching artworks:', error);
-      }
-    }
-    fetchArtworks();
+    fetchArtworksData().then((data) => {
+      setArtworks(data);
+      setResults(data); // Display all artworks initially
+    });
   }, []);
 
   useEffect(() => {
     if (query) {
-      setResults(artworks.filter(art => art.title.toLowerCase().includes(query.toLowerCase())));
+      setResults(artworks.filter((art: Artwork) => art.title.toLowerCase().includes(query.toLowerCase())));
     } else {
       setResults(artworks); // Default to all artworks
     }
@@ -48,7 +55,7 @@ export default function SFMOMA() {
         className="border border-gray-300 p-2 mb-4 w-full"
       />
       <div className="results-section">
-        {results.map((art) => (
+        {results.map((art: Artwork) => (
           <div key={art.id} className="flex items-center mb-4 p-4 border rounded">
             <img src={art.image_url} alt={art.title} className="w-16 h-16 object-cover mr-4" />
             <div className="flex-1">
