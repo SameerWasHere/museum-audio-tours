@@ -33,7 +33,7 @@ export default function ArtworkTable({ artworks }: ArtworkTableProps) {
       <table className="min-w-full bg-white dark:bg-gray-800">
         <colgroup>
           <col className="w-32 sm:w-40" /> {/* Increased width for Thumbnail */}
-          <col className="w-2/3" /> {/* Wider column for Artist & Artwork */}
+          <col className="w-1/3" /> {/* Wider column for Artist & Artwork */}
           <col className="w-32 sm:w-40" /> {/* Adjusted width for Actions */}
         </colgroup>
         <tbody>
