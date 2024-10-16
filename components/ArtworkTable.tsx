@@ -31,13 +31,6 @@ export default function ArtworkTable({ artworks }: ArtworkTableProps) {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white dark:bg-gray-800">
-        <thead>
-          <tr>
-            <th className="px-4 py-2 text-left text-foreground dark:text-foreground">Thumbnail</th>
-            <th className="px-4 py-2 text-left text-foreground dark:text-foreground">Artist & Artwork</th>
-            <th className="px-4 py-2 text-left text-foreground dark:text-foreground">Actions</th>
-          </tr>
-        </thead>
         <tbody>
           {artworks.map((artwork) => (
             <ArtworkRow key={artwork.id} artwork={artwork} />
@@ -47,3 +40,4 @@ export default function ArtworkTable({ artworks }: ArtworkTableProps) {
     </div>
   );
 }
+
