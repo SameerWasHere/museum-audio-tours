@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 type Artwork = {
   id: number;
@@ -17,12 +18,18 @@ export default function SFMOMA() {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Artwork[]>([]);
   const [artworks, setArtworks] = useState<Artwork[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchArtworksData().then((data) => {
-      setArtworks(data);
-      setResults(data); // Display all artworks initially
-    });
+    fetchArtworksData()
+      .then((data) => {
+        setArtworks(data);
+        setResults(data); // Display all artworks initially
+      })
+      .catch((err) => {
+        console.error('Error fetching artworks:', err);
+        setError('Failed to load artworks.');
+      });
   }, []);
 
   useEffect(() => {
@@ -47,13 +54,25 @@ export default function SFMOMA() {
       return await res.json();
     } catch (error) {
       console.error('Error fetching artworks:', error);
-      return [];
+      throw error;
     }
   }
 
   function playDescription(text: string) {
-    const utterance = new SpeechSynthesisUtterance(text);
-    speechSynthesis.speak(utterance);
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      speechSynthesis.speak(utterance);
+    } else {
+      alert('Speech Synthesis not supported in your browser.');
+    }
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto p-4">
+        <p className="text-red-500">{error}</p>
+      </div>
+    );
   }
 
   return (
@@ -69,10 +88,12 @@ export default function SFMOMA() {
       <div className="results-section">
         {results.map((art: Artwork) => (
           <div key={art.id} className="flex items-center mb-4 p-4 border rounded bg-white shadow">
-            <img
+            <Image
               src={art.image_url}
               alt={art.title}
-              className="w-24 h-24 object-cover mr-4 rounded"
+              width={96} // 24 * 4 = 96px
+              height={96}
+              className="object-cover mr-4 rounded"
             />
             <div className="flex-1">
               <p className="font-semibold">
@@ -104,3 +125,4 @@ export default function SFMOMA() {
     </div>
   );
 }
+

@@ -1,17 +1,19 @@
 // app/api/artworks/[id]/route.js
 import { NextResponse } from 'next/server';
-import { Client } from 'pg';
+import { Pool } from 'pg';
+
+const pool = new Pool({
+  connectionString: process.env.POSTGRES_URL,
+});
 
 export async function GET(req, { params }) {
-  const client = new Client({
-    connectionString: process.env.POSTGRES_URL,
-  });
-
   const { id } = params;
 
   try {
-    await client.connect();
+    const client = await pool.connect();
     const result = await client.query('SELECT * FROM artworks WHERE id = $1', [id]);
+    client.release();
+
     if (result.rows.length > 0) {
       return NextResponse.json(result.rows[0]);
     } else {
@@ -20,8 +22,7 @@ export async function GET(req, { params }) {
   } catch (error) {
     console.error('Error fetching artwork:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
-  } finally {
-    await client.end();
   }
 }
+
 

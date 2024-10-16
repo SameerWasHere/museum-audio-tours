@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 type Artwork = {
   id: number;
@@ -24,54 +25,41 @@ export default function ArtworkInfo() {
   const { id } = useParams();
   const router = useRouter();
   const [artwork, setArtwork] = useState<Artwork | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Function to normalize the id to a string
-    const normalizeId = (idParam: string | string[] | undefined): string | null => {
-      if (typeof idParam === 'string') {
-        return idParam;
-      } else if (Array.isArray(idParam) && idParam.length > 0) {
-        return idParam[0];
+    const fetchArtwork = async () => {
+      try {
+        const res = await fetch(`/api/artworks/${id}`);
+        if (!res.ok) {
+          if (res.status === 404) {
+            setError('Artwork not found.');
+          } else {
+            setError('Failed to fetch artwork data.');
+          }
+          setArtwork(null);
+        } else {
+          const data: Artwork = await res.json();
+          setArtwork(data);
+          setError(null);
+        }
+      } catch (err) {
+        console.error('Error fetching artwork:', err);
+        setError('Failed to fetch artwork data.');
+        setArtwork(null);
+      } finally {
+        setLoading(false);
       }
-      return null;
     };
 
-    const normalizedId = normalizeId(id);
-
-    if (normalizedId) {
-      fetchArtworkData(normalizedId)
-        .then((data) => {
-          if (data) {
-            setArtwork(data);
-          } else {
-            setError('Artwork not found.');
-          }
-        })
-        .catch((err) => {
-          console.error('Error fetching artwork:', err);
-          setError('Failed to fetch artwork data.');
-        });
+    if (id) {
+      fetchArtwork();
     } else {
       setError('Invalid artwork ID.');
+      setLoading(false);
     }
   }, [id]);
-
-  async function fetchArtworkData(id: string): Promise<Artwork | null> {
-    try {
-      const res = await fetch(`/api/artworks/${id}`);
-      if (!res.ok) {
-        if (res.status === 404) {
-          return null;
-        }
-        throw new Error('Failed to fetch artwork');
-      }
-      return await res.json();
-    } catch (error) {
-      console.error('Error fetching artwork:', error);
-      throw error;
-    }
-  }
 
   function playDescription(text: string) {
     if ('speechSynthesis' in window) {
@@ -80,6 +68,10 @@ export default function ArtworkInfo() {
     } else {
       alert('Speech Synthesis not supported in your browser.');
     }
+  }
+
+  if (loading) {
+    return <p className="p-4">Loading...</p>;
   }
 
   if (error) {
@@ -96,15 +88,14 @@ export default function ArtworkInfo() {
     );
   }
 
-  if (!artwork) {
-    return <p className="p-4">Loading...</p>;
-  }
-
+  // At this point, 'artwork' is guaranteed to be non-null
   return (
     <div className="container mx-auto p-4">
-      <img
+      <Image
         src={artwork.image_url}
         alt={artwork.title}
+        width={800} // Adjust based on desired size
+        height={600}
         className="w-full max-w-2xl mb-4 rounded shadow"
       />
       <h2 className="text-3xl mb-2">
