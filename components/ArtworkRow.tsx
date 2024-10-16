@@ -1,8 +1,8 @@
+// components/ArtworkRow.tsx
 'use client';
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 
 type Artwork = {
@@ -26,8 +26,6 @@ type ArtworkRowProps = {
 };
 
 export default function ArtworkRow({ artwork }: ArtworkRowProps) {
-  const router = useRouter();
-
   const speakDescription = useCallback((text: string) => {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel(); // Stop any ongoing speech

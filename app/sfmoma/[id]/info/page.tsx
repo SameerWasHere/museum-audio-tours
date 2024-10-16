@@ -1,6 +1,7 @@
 // app/sfmoma/[id]/info/page.tsx
 'use client';
 
+import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -67,7 +68,13 @@ export default function ArtworkInfoPage() {
       <h1 className="text-3xl font-bold mb-4 text-center">{artwork.title}</h1>
       <p className="text-center mb-4">by {artwork.artist_name}</p>
       <div className="flex flex-col items-center">
-        <img src={artwork.image_url} alt={artwork.title} className="object-cover rounded mb-4 w-64 h-64 sm:w-96 sm:h-96" />
+        <Image
+          src={artwork.image_url}
+          alt={artwork.title}
+          width={256}
+          height={256}
+          className="object-cover rounded mb-4 w-64 h-64 sm:w-96 sm:h-96"
+        />
         <p className="mb-2"><strong>Date Created:</strong> {artwork.date_created}</p>
         <p className="mb-2"><strong>Classification:</strong> {artwork.classification}</p>
         <p className="mb-2"><strong>Medium:</strong> {artwork.medium}</p>
@@ -87,4 +94,5 @@ export default function ArtworkInfoPage() {
     </div>
   );
 }
+
 

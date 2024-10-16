@@ -3,7 +3,7 @@
 const nextConfig = {
     reactStrictMode: true,
     images: {
-      domains: ['upload.wikimedia.org'], // Add more domains if your images are hosted elsewhere
+      domains: ['upload.wikimedia.org'], // Add other domains as needed
     },
   };
   

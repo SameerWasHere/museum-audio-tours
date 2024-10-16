@@ -1,3 +1,4 @@
+// components/ArtworkTable.tsx
 'use client';
 
 import ArtworkRow from './ArtworkRow';
