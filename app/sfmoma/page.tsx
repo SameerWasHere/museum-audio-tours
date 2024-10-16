@@ -34,7 +34,7 @@ export default function SFMOMAPage() {
         }
         const data: Artwork[] = await res.json();
         setArtworks(data);
-      } catch (err) {
+      } catch {
         setError('Failed to load artworks.');
       } finally {
         setLoading(false);
@@ -59,5 +59,3 @@ export default function SFMOMAPage() {
     </div>
   );
 }
-
-

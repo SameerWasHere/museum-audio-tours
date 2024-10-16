@@ -50,7 +50,7 @@ export default function ArtworkRow({ artwork }: ArtworkRowProps) {
             </a>
           </Link>
           <button
-            onClick={() => router.push(`/sfmoma/${artwork.id}/edit`)} // Assuming an edit route exists
+            onClick={() => router.push(`/sfmoma/${artwork.id}/edit`)} // Ensure the edit route exists
             className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 transition text-sm sm:px-3 sm:py-2 sm:text-base"
           >
             Edit
@@ -60,3 +60,5 @@ export default function ArtworkRow({ artwork }: ArtworkRowProps) {
     </tr>
   );
 }
+
+
