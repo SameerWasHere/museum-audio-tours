@@ -32,9 +32,9 @@ export default function ArtworkTable({ artworks }: ArtworkTableProps) {
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white dark:bg-gray-800">
         <colgroup>
-          <col className="w-24 sm:w-32" />
-          <col className="w-auto" />
-          <col className="w-48 sm:w-64" />
+          <col className="w-32 sm:w-40" /> {/* Increased width for Thumbnail */}
+          <col className="w-2/3" /> {/* Wider column for Artist & Artwork */}
+          <col className="w-32 sm:w-40" /> {/* Adjusted width for Actions */}
         </colgroup>
         <tbody>
           {artworks.map((artwork) => (
@@ -45,4 +45,5 @@ export default function ArtworkTable({ artworks }: ArtworkTableProps) {
     </div>
   );
 }
+
 

@@ -45,7 +45,7 @@ export default function ArtworkRow({ artwork }: ArtworkRowProps) {
           alt={artwork.title}
           width={128}
           height={128}
-          className="object-cover rounded w-24 h-24 sm:w-32 sm:h-32 max-w-full"
+          className="object-cover rounded w-32 h-32 sm:w-40 sm:h-40 max-w-full"
         />
       </td>
 
@@ -56,12 +56,12 @@ export default function ArtworkRow({ artwork }: ArtworkRowProps) {
 
       {/* Actions Column */}
       <td className="px-4 py-2">
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-col gap-2">
           {/* Info Button */}
           <Link href={`/sfmoma/${artwork.id}/info`}>
             <a
               aria-label={`View info for ${artwork.title}`}
-              className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition text-sm sm:px-3 sm:py-2 sm:text-base"
+              className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition text-sm sm:px-4 sm:py-2 sm:text-base"
             >
               Info
             </a>
@@ -70,7 +70,7 @@ export default function ArtworkRow({ artwork }: ArtworkRowProps) {
           {/* Play Short Description Button */}
           <button
             onClick={() => speakDescription(artwork.short_description)}
-            className="bg-purple-500 text-white px-2 py-1 rounded hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400 transition text-sm sm:px-3 sm:py-2 sm:text-base"
+            className="bg-purple-500 text-white px-3 py-1 rounded hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400 transition text-sm sm:px-4 sm:py-2 sm:text-base"
             aria-label={`Play short description for ${artwork.title}`}
           >
             Play Short
@@ -79,7 +79,7 @@ export default function ArtworkRow({ artwork }: ArtworkRowProps) {
           {/* Play Long Description Button */}
           <button
             onClick={() => speakDescription(artwork.long_description)}
-            className="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition text-sm sm:px-3 sm:py-2 sm:text-base"
+            className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition text-sm sm:px-4 sm:py-2 sm:text-base"
             aria-label={`Play long description for ${artwork.title}`}
           >
             Play Long
