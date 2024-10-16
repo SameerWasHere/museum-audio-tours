@@ -43,9 +43,9 @@ export default function ArtworkRow({ artwork }: ArtworkRowProps) {
         <Image
           src={artwork.image_url}
           alt={artwork.title}
-          width={64}
-          height={64}
-          className="object-cover rounded w-16 h-16 sm:w-24 sm:h-24 max-w-full"
+          width={128}
+          height={128}
+          className="object-cover rounded w-24 h-24 sm:w-32 sm:h-32 max-w-full"
         />
       </td>
 

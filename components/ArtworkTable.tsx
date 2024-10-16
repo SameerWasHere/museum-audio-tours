@@ -31,6 +31,11 @@ export default function ArtworkTable({ artworks }: ArtworkTableProps) {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white dark:bg-gray-800">
+        <colgroup>
+          <col className="w-24 sm:w-32" />
+          <col className="w-auto" />
+          <col className="w-48 sm:w-64" />
+        </colgroup>
         <tbody>
           {artworks.map((artwork) => (
             <ArtworkRow key={artwork.id} artwork={artwork} />
