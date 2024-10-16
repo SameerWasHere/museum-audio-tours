@@ -1,3 +1,4 @@
+// app/api/artworks/route.js
 import { NextResponse } from 'next/server';
 import { Client } from 'pg';
 
@@ -17,3 +18,4 @@ export async function GET() {
     await client.end();
   }
 }
+
