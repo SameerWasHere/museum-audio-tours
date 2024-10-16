@@ -2,7 +2,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 type Artwork = {
@@ -21,10 +21,15 @@ type Artwork = {
   long_description: string;
 };
 
-export default function ArtworkInfoPage() {
+type ArtworkInfoPageProps = {
+  params: {
+    id: string;
+  };
+};
+
+export default function ArtworkInfoPage({ params }: ArtworkInfoPageProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const id = searchParams.get('id');
+  const { id } = params;
 
   const [artwork, setArtwork] = useState<Artwork | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
