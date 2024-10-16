@@ -70,14 +70,16 @@ export default function ArtworkInfo() {
     }
   }
 
+  // Early return if loading
   if (loading) {
     return <p className="p-4">Loading...</p>;
   }
 
-  if (error) {
+  // Early return if there's an error or artwork is null
+  if (error || !artwork) {
     return (
       <div className="container mx-auto p-4">
-        <p className="text-red-500">{error}</p>
+        <p className="text-red-500">{error || 'Artwork not found.'}</p>
         <button
           onClick={() => router.back()}
           className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
