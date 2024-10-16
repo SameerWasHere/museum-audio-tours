@@ -1,7 +1,6 @@
-// app/sfmoma/page.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import ArtworkTable from '../../components/ArtworkTable';
 
 type Artwork = {
@@ -22,8 +21,11 @@ type Artwork = {
 
 export default function SFMOMAPage() {
   const [artworks, setArtworks] = useState<Artwork[]>([]);
+  const [filteredArtworks, setFilteredArtworks] = useState<Artwork[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const fetchArtworks = async () => {
@@ -34,6 +36,7 @@ export default function SFMOMAPage() {
         }
         const data: Artwork[] = await res.json();
         setArtworks(data);
+        setFilteredArtworks(data);
       } catch {
         setError('Failed to load artworks.');
       } finally {
@@ -43,6 +46,32 @@ export default function SFMOMAPage() {
 
     fetchArtworks();
   }, []);
+
+  useEffect(() => {
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+
+    debounceTimeout.current = setTimeout(() => {
+      if (searchQuery.trim() === '') {
+        setFilteredArtworks(artworks);
+      } else {
+        const lowercasedQuery = searchQuery.toLowerCase();
+        const filtered = artworks.filter(
+          (artwork) =>
+            artwork.artist_name.toLowerCase().includes(lowercasedQuery) ||
+            artwork.title.toLowerCase().includes(lowercasedQuery)
+        );
+        setFilteredArtworks(filtered);
+      }
+    }, 300); // 300ms debounce
+
+    return () => {
+      if (debounceTimeout.current) {
+        clearTimeout(debounceTimeout.current);
+      }
+    };
+  }, [searchQuery, artworks]);
 
   if (loading) {
     return <p className="p-4 text-center">Loading artworks...</p>;
@@ -55,7 +84,19 @@ export default function SFMOMAPage() {
   return (
     <div className="container mx-auto p-2 sm:p-4">
       <h1 className="text-2xl sm:text-3xl font-bold mb-4 text-center">SFMOMA Artworks</h1>
-      <ArtworkTable artworks={artworks} />
+      
+      {/* Search Bar */}
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Search by artist or artwork name..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+      
+      <ArtworkTable artworks={filteredArtworks} />
     </div>
   );
 }
