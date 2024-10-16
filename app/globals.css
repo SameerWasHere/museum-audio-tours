@@ -1,12 +1,16 @@
+/* styles/globals.css */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Define CSS Variables for Light Mode */
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
 
+/* Define CSS Variables for Dark Mode */
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -14,14 +18,17 @@
   }
 }
 
+/* Apply CSS Variables to Body */
 body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Custom Utility for Text Wrapping (Optional) */
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
 }
+

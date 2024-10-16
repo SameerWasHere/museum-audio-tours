@@ -1,128 +1,63 @@
 // app/sfmoma/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import ArtworkTable from '../../components/ArtworkTable';
 
 type Artwork = {
   id: number;
   artist_name: string;
   title: string;
   image_url: string;
+  date_created: string;
+  classification: string;
+  medium: string;
+  dimensions: string;
+  date_acquired: string;
+  credit: string;
+  copyright: string;
   short_description: string;
   long_description: string;
 };
 
-export default function SFMOMA() {
-  const [query, setQuery] = useState('');
-  const [results, setResults] = useState<Artwork[]>([]);
+export default function SFMOMAPage() {
   const [artworks, setArtworks] = useState<Artwork[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchArtworksData()
-      .then((data) => {
+    const fetchArtworks = async () => {
+      try {
+        const res = await fetch('/api/artworks');
+        if (!res.ok) {
+          throw new Error('Failed to fetch artworks.');
+        }
+        const data: Artwork[] = await res.json();
         setArtworks(data);
-        setResults(data); // Display all artworks initially
-      })
-      .catch((err) => {
-        console.error('Error fetching artworks:', err);
+      } catch (err) {
         setError('Failed to load artworks.');
-      });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchArtworks();
   }, []);
 
-  useEffect(() => {
-    if (query) {
-      setResults(
-        artworks.filter((art: Artwork) =>
-          art.title.toLowerCase().includes(query.toLowerCase()) ||
-          art.artist_name.toLowerCase().includes(query.toLowerCase())
-        )
-      );
-    } else {
-      setResults(artworks); // Default to all artworks
-    }
-  }, [query, artworks]);
-
-  async function fetchArtworksData(): Promise<Artwork[]> {
-    try {
-      const res = await fetch('/api/artworks');
-      if (!res.ok) {
-        throw new Error('Failed to fetch artworks');
-      }
-      return await res.json();
-    } catch (error) {
-      console.error('Error fetching artworks:', error);
-      throw error;
-    }
-  }
-
-  function playDescription(text: string) {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      speechSynthesis.speak(utterance);
-    } else {
-      alert('Speech Synthesis not supported in your browser.');
-    }
+  if (loading) {
+    return <p className="p-4 text-center">Loading artworks...</p>;
   }
 
   if (error) {
-    return (
-      <div className="container mx-auto p-4">
-        <p className="text-red-500">{error}</p>
-      </div>
-    );
+    return <p className="text-red-500 p-4 text-center">{error}</p>;
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl mb-4">SFMOMA</h1>
-      <input
-        type="text"
-        placeholder="Search artwork..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        className="border border-gray-300 p-2 mb-4 w-full rounded"
-      />
-      <div className="results-section">
-        {results.map((art: Artwork) => (
-          <div key={art.id} className="flex items-center mb-4 p-4 border rounded bg-white shadow">
-            <Image
-              src={art.image_url}
-              alt={art.title}
-              width={96} // 24 * 4 = 96px
-              height={96}
-              className="object-cover mr-4 rounded"
-            />
-            <div className="flex-1">
-              <p className="font-semibold">
-                {art.artist_name}, {art.title}
-              </p>
-              <div className="flex gap-2 mt-2">
-                <Link href={`/sfmoma/${art.id}`}>
-                  <button className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700 transition">
-                    Info
-                  </button>
-                </Link>
-                <button
-                  onClick={() => playDescription(art.short_description)}
-                  className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-700 transition"
-                >
-                  Play Short Description
-                </button>
-                <button
-                  onClick={() => playDescription(art.long_description)}
-                  className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-700 transition"
-                >
-                  Play Long Description
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+    <div className="container mx-auto p-2 sm:p-4">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-4 text-center">SFMOMA Artworks</h1>
+      <ArtworkTable artworks={artworks} />
     </div>
   );
 }
+
 
