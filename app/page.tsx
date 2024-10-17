@@ -30,10 +30,12 @@ export default function Home() {
           <h1 className="text-lg text-white">Museum Audio Tour</h1>
         </div>
 
-        {/* Centered Big Text */}
+        {/* Centered Multi-line Big Text */}
         <div className="flex flex-col items-center justify-center h-full">
-          <h2 className="text-4xl md:text-6xl font-bold text-center text-white">
-            Free Museum Audio Tour At Your Fingertips
+          <h2 className="text-4xl md:text-6xl text-center text-white">
+            <span className="font-normal block mb-4">FREE</span>
+            <span className="font-bold block mb-4">Museum Audio Tour</span>
+            <span className="font-normal">at your fingertips</span>
           </h2>
         </div>
 
@@ -44,8 +46,8 @@ export default function Home() {
       </section>
 
       {/* Museums Section */}
-      <section className="py-12 bg-white">
-        <h2 className="text-2xl font-semibold text-center mb-6 text-gray-800">Museums</h2>
+      <section className="py-12 bg-white dark:bg-gray-900">
+        <h2 className="text-2xl font-semibold text-center mb-6 text-gray-800 dark:text-white">Museums</h2>
         <div className="flex justify-center">
           <Link href="/sfmoma">
             <button className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">
@@ -57,4 +59,3 @@ export default function Home() {
     </div>
   );
 }
-
