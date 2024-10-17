@@ -30,11 +30,11 @@ export default function ArtworkTable({ artworks }: ArtworkTableProps) {
 
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full bg-white dark:bg-gray-800">
+      <table className="min-w-full bg-gray-100 dark:bg-gray-900">
         <colgroup>
-          <col className="w-32 sm:w-40" /> {/* Increased width for Thumbnail */}
-          <col className="w-1/3" /> {/* Wider column for Artist & Artwork */}
-          <col className="w-32 sm:w-40" /> {/* Adjusted width for Actions */}
+          <col className="w-3/8" /> {/* Increased width for Thumbnail */}
+          <col className="w-1/2" /> {/* Wider column for Artist & Artwork */}
+          <col className="w-1/8" /> {/* Adjusted width for Actions */}
         </colgroup>
         <tbody>
           {artworks.map((artwork) => (

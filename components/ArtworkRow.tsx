@@ -1,5 +1,3 @@
-// components/ArtworkRow.tsx
-
 'use client';
 
 import Image from 'next/image';
@@ -27,25 +25,29 @@ type ArtworkRowProps = {
 };
 
 export default function ArtworkRow({ artwork }: ArtworkRowProps) {
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loadingShort, setLoadingShort] = useState(false);
+  const [loadingLong, setLoadingLong] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [audioInstance, setAudioInstance] = useState<HTMLAudioElement | null>(null);
 
-  const generateAudio = async (text: string) => {
+  const generateAudio = async (text: string, isShort: boolean) => {
+    const setLoading = isShort ? setLoadingShort : setLoadingLong;
     setLoading(true);
+
     try {
-      // Stop any ongoing audio
-      if (audioUrl) {
-        const existingAudio = new Audio(audioUrl);
-        existingAudio.pause();
-        URL.revokeObjectURL(audioUrl);
+      if (audioInstance) {
+        audioInstance.pause();
+        URL.revokeObjectURL(audioUrl!);
         setAudioUrl(null);
+        setAudioInstance(null);
+        setLoading(false);
+        return;
       }
 
       const response = await fetch('/api/generate-audio', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // 'x-api-key': process.env.NEXT_PUBLIC_TTS_API_KEY, // Uncomment if using API key
         },
         body: JSON.stringify({ text }),
       });
@@ -59,23 +61,19 @@ export default function ArtworkRow({ artwork }: ArtworkRowProps) {
       const url = URL.createObjectURL(audioBlob);
       setAudioUrl(url);
 
-      // Play the audio
       const audio = new Audio(url);
+      setAudioInstance(audio);
       audio.play();
 
-      // Revoke the object URL after playback
       audio.onended = () => {
         URL.revokeObjectURL(url);
         setAudioUrl(null);
+        setAudioInstance(null);
+        setLoading(false);
       };
     } catch (error: unknown) {
       console.error('Error generating audio:', error);
-      if (error instanceof Error) {
-        alert(error.message);
-      } else {
-        alert('Failed to generate audio.');
-      }
-    } finally {
+      alert(error instanceof Error ? error.message : 'Failed to generate audio.');
       setLoading(false);
     }
   };
@@ -87,48 +85,49 @@ export default function ArtworkRow({ artwork }: ArtworkRowProps) {
         <Image
           src={artwork.image_url}
           alt={artwork.title}
-          width={128}
-          height={128}
-          className="object-cover rounded w-32 h-32 sm:w-40 sm:h-40 max-w-full"
+          width={100}
+          height={100}
+          className="object-cover rounded w-30 h-30 sm:w-40 sm:h-40 max-w-full"
         />
       </td>
 
       {/* Artist & Artwork Column */}
-      <td className="px-4 py-2 text-gray-700 dark:text-gray-200">
+      <td className="px-3 py-2 text-gray-700 dark:text-gray-200">
         <span className="font-semibold">{artwork.artist_name}</span>, {artwork.title}
       </td>
 
       {/* Actions Column */}
-      <td className="px-4 py-2">
-        <div className="flex flex-col gap-2">
+      <td className="px-3 py-2">
+        <div className="flex flex-col items-end gap-2">
           {/* Info Button */}
-          <Link href={`/sfmoma/${artwork.id}/info`}>
-            <a
-              aria-label={`View info for ${artwork.title}`}
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition text-sm sm:text-base text-center"
-            >
-              Info
-            </a>
+          <Link 
+            href={`/sfmoma/${artwork.id}/info`} 
+            aria-label={`View info for ${artwork.title}`}
+            className="w-24 bg-blue-400 text-black px-2 py-1 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition text-sm text-center"
+          >
+            Info
           </Link>
 
           {/* Play Short Description Button */}
           <button
-            onClick={() => generateAudio(artwork.short_description)}
-            className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400 transition text-sm sm:text-base text-center"
+            onClick={() => generateAudio(artwork.short_description, true)}
+            className={`w-24 px-2 py-1 rounded focus:outline-none focus:ring-2 text-sm text-center text-black ${
+              loadingShort ? 'bg-red-500 hover:bg-red-700' : 'bg-purple-400 hover:bg-purple-700 focus:ring-purple-400'
+            }`}
             aria-label={`Play short description for ${artwork.title}`}
-            disabled={loading}
           >
-            {loading ? 'Loading...' : 'Play Short'}
+            {loadingShort ? 'Stop' : 'Play Short'}
           </button>
 
           {/* Play Long Description Button */}
           <button
-            onClick={() => generateAudio(artwork.long_description)}
-            className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition text-sm sm:text-base text-center"
+            onClick={() => generateAudio(artwork.long_description, false)}
+            className={`w-24 px-2 py-1 rounded focus:outline-none focus:ring-2 text-sm text-center text-black ${
+              loadingLong ? 'bg-red-500 hover:bg-red-700' : 'bg-orange-400 hover:bg-orange-800 focus:ring-orange-400'
+            }`}
             aria-label={`Play long description for ${artwork.title}`}
-            disabled={loading}
           >
-            {loading ? 'Loading...' : 'Play Long'}
+            {loadingLong ? 'Stop' : 'Play Long'}
           </button>
         </div>
       </td>

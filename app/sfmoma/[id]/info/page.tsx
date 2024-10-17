@@ -3,7 +3,7 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 
 type Artwork = {
   id: number;
@@ -32,13 +32,14 @@ export default function ArtworkInfoPage({ params }: ArtworkInfoPageProps) {
   const { id } = params;
 
   const [artwork, setArtwork] = useState<Artwork | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loadingShort, setLoadingShort] = useState<boolean>(false);
+  const [loadingLong, setLoadingLong] = useState<boolean>(false);
+  const [audioInstance, setAudioInstance] = useState<HTMLAudioElement | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) {
       setError('No artwork ID provided.');
-      setLoading(false);
       return;
     }
 
@@ -52,27 +53,60 @@ export default function ArtworkInfoPage({ params }: ArtworkInfoPageProps) {
         setArtwork(data);
       } catch {
         setError('Failed to load artwork.');
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchArtwork();
   }, [id]);
 
-  const speakDescription = useCallback((text: string) => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel(); // Stop any ongoing speech
-      const utterance = new SpeechSynthesisUtterance(text);
-      window.speechSynthesis.speak(utterance);
-    } else {
-      alert('Sorry, your browser does not support speech synthesis.');
-    }
-  }, []);
+  const handleAudio = async (text: string, isShort: boolean) => {
+    const setLoading = isShort ? setLoadingShort : setLoadingLong;
+    const loadingState = isShort ? loadingShort : loadingLong;
 
-  if (loading) {
-    return <p className="p-4 text-center">Loading artwork info...</p>;
-  }
+    if (loadingState) {
+      if (audioInstance) {
+        audioInstance.pause();
+        URL.revokeObjectURL(audioInstance.src);
+        setAudioInstance(null);
+      }
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch('/api/generate-audio', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to generate audio.');
+      }
+
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+
+      setAudioInstance(audio);
+      audio.play();
+
+      audio.onended = () => {
+        URL.revokeObjectURL(audioUrl);
+        setAudioInstance(null);
+        setLoading(false);
+      };
+    } catch (error: unknown) {
+      console.error('Error generating audio:', error);
+      alert(error instanceof Error ? error.message : 'Failed to generate audio.');
+      setLoading(false);
+    }
+  };
 
   if (error || !artwork) {
     return <p className="text-red-500 p-4 text-center">{error || 'Artwork not found.'}</p>;
@@ -115,11 +149,13 @@ export default function ArtworkInfoPage({ params }: ArtworkInfoPageProps) {
       {/* Play Short Description Button */}
       <div className="mb-2">
         <button
-          onClick={() => speakDescription(artwork.short_description)}
-          className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
+          onClick={() => handleAudio(artwork.short_description, true)}
+          className={`w-24 px-2 py-1 rounded focus:outline-none focus:ring-2 text-sm text-center text-black ${
+            loadingShort ? 'bg-red-500 hover:bg-red-700' : 'bg-purple-400 hover:bg-purple-700 focus:ring-purple-400'
+          }`}
           aria-label={`Play short description for ${artwork.title}`}
         >
-          Play Short Description
+          {loadingShort ? 'Stop' : 'Play Short'}
         </button>
       </div>
       <div className="mb-6">
@@ -128,11 +164,13 @@ export default function ArtworkInfoPage({ params }: ArtworkInfoPageProps) {
       {/* Play Long Description Button */}
       <div className="mb-2">
         <button
-          onClick={() => speakDescription(artwork.long_description)}
-          className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
+          onClick={() => handleAudio(artwork.long_description, false)}
+          className={`w-24 px-2 py-1 rounded focus:outline-none focus:ring-2 text-sm text-center text-black ${
+            loadingLong ? 'bg-red-500 hover:bg-red-700' : 'bg-orange-400 hover:bg-orange-800 focus:ring-orange-400'
+          }`}
           aria-label={`Play long description for ${artwork.title}`}
         >
-          Play Long Description
+          {loadingLong ? 'Stop' : 'Play Long'}
         </button>
       </div>
       <div className="mb-6">
@@ -140,13 +178,17 @@ export default function ArtworkInfoPage({ params }: ArtworkInfoPageProps) {
       </div>
       <button
         onClick={() => router.back()}
-        className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700 transition"
+        className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-700 transition"
       >
         Go Back
       </button>
     </div>
   );
 }
+
+
+
+
 
 
 
