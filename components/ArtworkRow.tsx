@@ -102,7 +102,7 @@ export default function ArtworkRow({ artwork }: ArtworkRowProps) {
       <td className="px-4 py-2">
         <div className="flex flex-col gap-2">
           {/* Info Button */}
-          <Link href={`/api/artworks/${artwork.id}/info`}>
+          <Link href={`/sfmoma/${artwork.id}/info`}>
             <a
               aria-label={`View info for ${artwork.title}`}
               className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition text-sm sm:text-base text-center"

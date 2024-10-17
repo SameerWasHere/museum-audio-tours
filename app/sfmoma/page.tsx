@@ -1,3 +1,4 @@
+// app/sfmoma/page.tsx
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
@@ -36,7 +37,7 @@ export default function SFMOMAPage() {
         }
         const data: Artwork[] = await res.json();
         setArtworks(data);
-        setFilteredArtworks(data);
+        setFilteredArtworks(data.slice(0, 10)); // Initially display only the first 10 artworks
       } catch {
         setError('Failed to load artworks.');
       } finally {
@@ -54,7 +55,7 @@ export default function SFMOMAPage() {
 
     debounceTimeout.current = setTimeout(() => {
       if (searchQuery.trim() === '') {
-        setFilteredArtworks(artworks);
+        setFilteredArtworks(artworks.slice(0, 10)); // Reset to first 10 artworks if no search query
       } else {
         const lowercasedQuery = searchQuery.toLowerCase();
         const filtered = artworks.filter(
@@ -62,7 +63,7 @@ export default function SFMOMAPage() {
             artwork.artist_name.toLowerCase().includes(lowercasedQuery) ||
             artwork.title.toLowerCase().includes(lowercasedQuery)
         );
-        setFilteredArtworks(filtered);
+        setFilteredArtworks(filtered); // Update with filtered list based on query
       }
     }, 300); // 300ms debounce
 
