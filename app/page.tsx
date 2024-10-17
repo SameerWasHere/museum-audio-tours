@@ -3,7 +3,6 @@
 
 import Link from 'next/link';
 import { useEffect } from 'react';
-import Head from 'next/head';
 
 export default function Home() {
   useEffect(() => {
@@ -21,31 +20,6 @@ export default function Home() {
 
   return (
     <>
-      <Head>
-        <title>Museum Audio Tour</title>
-        <meta name="description" content="Enjoy a free museum audio tour at your fingertips." />
-
-        {/* Open Graph Meta Tags */}
-          <meta property="og:title" content="Museum Audio Tour - A Free Guide" />
-          <meta property="og:description" content="Explore SFMOMA with our free audio guide. Dive deep into the world of art at your fingertips." />
-          <meta property="og:image" content="https://museum-audio-tours.vercel.app/preview.png" />
-          <meta property="og:url" content="https://museum-audio-tours.vercel.app/" />
-          <meta property="og:type" content="website" />
-
-        {/* Twitter Meta Tags */}
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:title" content="Museum Audio Tour - A Free Guide" />
-          <meta name="twitter:description" content="Explore SFMOMA with our free audio guide. Dive deep into the world of art at your fingertips." />
-          <meta name="twitter:image" content="https://museum-audio-tours.vercel.app/preview.png" />
-
-        {/* Favicon and Icons */}
-          <link rel="icon" href="/favicon.ico" />
-          <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-          <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-          <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-          <link rel="manifest" href="/site.webmanifest" />
-       </Head>
-
       <div className="flex flex-col">
         {/* Header Section */}
         <section
