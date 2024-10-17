@@ -14,18 +14,22 @@ export async function POST(request) {
       );
     }
 
-    // Retrieve the Base64-encoded credentials from environment variables
-    const credentialsBase64 = process.env.GOOGLE_CREDENTIALS;
-    if (!credentialsBase64) {
+    let client;
+
+    // Check if GOOGLE_CREDENTIALS is set (Production Environment)
+    if (process.env.GOOGLE_CREDENTIALS) {
+      // Decode the Base64 string to JSON
+      const credentialsJson = Buffer.from(process.env.GOOGLE_CREDENTIALS, 'base64').toString('utf-8');
+      const credentials = JSON.parse(credentialsJson);
+
+      // Initialize the Text-to-Speech client with the decoded credentials
+      client = new TextToSpeechClient({ credentials });
+    } else if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+      // Initialize the client using GOOGLE_APPLICATION_CREDENTIALS (Local Environment)
+      client = new TextToSpeechClient();
+    } else {
       throw new Error('Google credentials are not configured.');
     }
-
-    // Decode the Base64 string to JSON
-    const credentialsJson = Buffer.from(credentialsBase64, 'base64').toString('utf-8');
-    const credentials = JSON.parse(credentialsJson);
-
-    // Initialize the Text-to-Speech client with the decoded credentials
-    const client = new TextToSpeechClient({ credentials });
 
     // Configure the Text-to-Speech request
     const requestConfig = {
@@ -63,6 +67,8 @@ export async function POST(request) {
     );
   }
 }
+
+
 
 
 
