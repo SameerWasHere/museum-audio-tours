@@ -93,7 +93,8 @@ export default function SFMOMAPage() {
           placeholder="Search by artist or artwork name..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 
+            bg-white text-black dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:placeholder-gray-400"
         />
       </div>
       
