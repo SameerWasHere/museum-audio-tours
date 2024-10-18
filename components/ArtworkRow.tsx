@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 type Artwork = {
   id: number;
@@ -77,6 +77,16 @@ export default function ArtworkRow({ artwork }: ArtworkRowProps) {
       setLoading(false);
     }
   };
+
+  // Cleanup audio when the component unmounts
+  useEffect(() => {
+    return () => {
+      if (audioInstance) {
+        audioInstance.pause();
+        URL.revokeObjectURL(audioInstance.src);
+      }
+    };
+  }, [audioInstance]);
 
   return (
     <tr className="border-b">

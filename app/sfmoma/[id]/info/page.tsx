@@ -1,4 +1,3 @@
-// app/sfmoma/[id]/info/page.tsx
 'use client';
 
 import Image from 'next/image';
@@ -108,6 +107,16 @@ export default function ArtworkInfoPage({ params }: ArtworkInfoPageProps) {
     }
   };
 
+  // Stop audio when the user navigates away from the page
+  useEffect(() => {
+    return () => {
+      if (audioInstance) {
+        audioInstance.pause();
+        URL.revokeObjectURL(audioInstance.src);
+      }
+    };
+  }, [audioInstance]);
+
   if (error || !artwork) {
     return <p className="text-red-500 p-4 text-center">{error || 'Artwork not found.'}</p>;
   }
@@ -185,6 +194,7 @@ export default function ArtworkInfoPage({ params }: ArtworkInfoPageProps) {
     </div>
   );
 }
+
 
 
 
