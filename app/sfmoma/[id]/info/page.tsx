@@ -118,7 +118,7 @@ export default function ArtworkInfoPage({ params }: ArtworkInfoPageProps) {
   }, [audioInstance]);
 
   if (error || !artwork) {
-    return <p className="text-red-500 p-4 text-center">{error || 'Artwork not found.'}</p>;
+    return <p className="text-gray-700 p-4 text-center">{error || 'Loading Artwork...'}</p>;
   }
 
   return (
